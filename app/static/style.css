@@ -1,0 +1,47 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    background-color: rgb(37, 37, 37);
+    color: #ffffff;
+    font-size: 14pt;
+    font-family: sans-serif;
+    margin: 10px 40px 10px 40px;
+}
+
+/* Hor line */
+hr {
+    margin: 16px 0px 16px 0px;
+}
+
+/* Paragraph */
+p {
+    margin: 16px;
+}
+
+/* Link */
+a {
+    color: goldenrod;
+    text-decoration: none;
+}
+
+/* Footer */
+footer {
+    display: block;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    border-top-width: 1px;
+    border-top-style: solid;
+    border-top-color: #555555;
+    margin-left: 40px;
+    margin-right: 40px;
+    margin-bottom: 10px;
+    padding-top: 10px;
+    font-size: 10pt;
+    text-align: center;
+    color: #888888;
+}
