@@ -4,7 +4,7 @@
 }
 
 body {
-    background-color: rgb(37, 37, 37);
+    background-color: rgb(50, 50, 50);
     color: #ffffff;
     font-size: 14pt;
     font-family: sans-serif;
@@ -44,4 +44,24 @@ footer {
     font-size: 10pt;
     text-align: center;
     color: #888888;
+}
+
+section {
+    display: block;
+}
+/*Grid*/
+
+.grid {
+    display: grid;
+	overflow: hidden;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 10px;
+}
+
+.grid ul {
+	overflow: hidden;
+}
+
+.grid ul li {
+    overflow: hidden;
 }

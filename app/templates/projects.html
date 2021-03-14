@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Git</h2>
+<div class="grid" id="layout">
+    <section>
+        <h3>Project</h3>
+        <ul>
+            {% for p in projects %}
+            <li>{{p.name}}</li>
+            {% endfor %}
+        </ul>
+    </section>
+    <section>
+        <h3>Description</h3>
+        <ul>
+            {% for p in projects %}
+            <li>{{p.description}}</li>
+            {% endfor %}
+        </ul>
+    </section>
+    <section>
+        <h3>Last Changes</h3>
+        <ul>
+            {% for p in projects %}
+            <li>{{p.lastchanged}}</li>
+            {% endfor %}
+        </ul>
+    </section>
+</div>
+{% endblock %}
