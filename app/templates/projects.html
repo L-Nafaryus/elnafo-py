@@ -1,12 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Git</h2>
 <div class="grid" id="layout">
     <section>
         <h3>Project</h3>
         <ul>
             {% for p in projects %}
-            <li>{{p.name}}</li>
+            <li><a href="{{p.url}}">{{p.name}}</a></li>
             {% endfor %}
         </ul>
     </section>

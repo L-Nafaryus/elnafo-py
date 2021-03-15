@@ -30,10 +30,11 @@ a {
 /* Footer */
 footer {
     display: block;
-    position: absolute;
+    position: relative;
     bottom: 0;
     right: 0;
     left: 0;
+    /*height: 50px;*/
     border-top-width: 1px;
     border-top-style: solid;
     border-top-color: #555555;
