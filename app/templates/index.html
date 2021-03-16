@@ -1,11 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
 <h2>Links</h2>
-<p>
 <ul>
     {% for link in links %}
     <li><a href="{{link.url}}">{{link.desc}}</a></li>
     {% endfor %}
 </ul>
-</p>
 {% endblock %}

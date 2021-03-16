@@ -1,10 +1,31 @@
 {% extends "base.html" %}
 {% block content %}
+<h3>Summary</h3>
+<hr>
+<div class="grid">
+    <section>
+        <ul>
+            <li>description</li>
+            <li>owner</li>
+            <li>last change</li>
+            <li>remotes</li>
+        </ul>
+    </section>
+    <section>
+        <ul>
+            <li>{{ summary.desc }}</li>
+            <li>{{ summary.owner }}</li>
+            <li>{{ summary.lastchange }}</li>
+            <li>{{ summary.remotes }}</li>
+        </ul>
+    </section>
+</div>
+<hr>
+{% autoescape off %}
+<h3><code>{{ root | safe }}</code></h3>
+{% endautoescape %}
 <div class="grid" id="layout">
     <section>
-        {% autoescape off %}
-        <h3><code>{{ root | safe }}</code></h3>
-        {% endautoescape %}
         {% if blob %}
         <pre>
             {% autoescape off %}
@@ -22,7 +43,11 @@
         {% endif %}
     </section>
 </div>
+<hr>
 {% if readme %}
+<h3>README.md</h3>
+<div class="markdown">
     {{ readme | safe }}
+</div>
 {% endif %}
 {% endblock %}

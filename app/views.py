@@ -1,12 +1,24 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from flask import render_template
+from flask import render_template, send_file
 from app import app
 import os
 from git import Repo
 import pypandoc
 
+###############################################################################
+#   Error handlers
+#
+@app.errorhandler(404)
+def not_found_error(error):
+    title = "404 Not found:c"
+    return render_template("404.html", title = title), 404
+
+
+###############################################################################
+#   Root route
+#
 @app.route('/')
 @app.route('/index')
 def index():
@@ -27,11 +39,20 @@ def index():
         {
             "url": "/git",
             "desc": "Git"
+        },
+        {
+            "url": "/audio",
+            "desc": "Audio"
         }
     ]
+    links = sorted(links, key = lambda item: item["desc"])
 
     return render_template("index.html", title = title, links = links)
 
+
+###############################################################################
+#   Git
+#
 @app.route("/git")
 def git():
     title = "ELNAFO > Git"
@@ -54,11 +75,6 @@ def git():
 
     return render_template("projects.html", title = title, projects = projects)
 
-@app.errorhandler(404)
-def not_found_error(error):
-    title = "404 Not found:c"
-    return render_template("404.html", title = title), 404
-
 # TODO: branch changing
 @app.route("/git/<repository>")
 @app.route("/git/<repository>/<branch>/blob/<path:blob>")
@@ -69,13 +85,21 @@ def git_repository(repository, branch = "master", blob = None, tree = None):
     
     repo = Repo(repopath)
     curbranch = repo.heads[branch]
+    firstcommit = list(repo.iter_commits(curbranch))[-1]
     lastcommit = list(repo.iter_commits(curbranch))[0]
     entries = list(lastcommit.tree.traverse())
+    remotes = list(repo.remotes.origin.urls)
+
+    summary = {
+        "desc": repo.description,
+        "owner": firstcommit.author,
+        "lastchange": str(lastcommit.authored_datetime),
+        "remotes": "<br>".join(remotes)
+    }
     
     files = []
     readme = None
     blobcontent = None
-    # TODO: fix slahes in html
     root = "./"
     
     if blob:
@@ -117,28 +141,67 @@ def git_repository(repository, branch = "master", blob = None, tree = None):
                     "name": entry.name
                 })
 
-    return render_template("repository.html", title = title, root = root, blob = blobcontent, files = files, readme = readme)
+    return render_template("repository.html", 
+        title = title, root = root, summary = summary, 
+        blob = blobcontent, files = files, readme = readme)
 
 
-#github = os.path.join(os.getcwd(), "app/public/git")
-#for d in os.listdir():
-#    isgit = True
+###############################################################################
+#   Audio
+#   Concept: path > artist > album > track.extension
 #
-#    try:
-#        repo = Repo(d)
-#
-#    except:
-#        isgit = false
-#
-#    if not isgit:
-#        continue
-#    
-#    git_repo = []
-#
-#    def git_repo_f():
-#        return """Hola"""
-#    
-#    git_repo.append({ "grf1": git_repo_f })
-#    #
-#    app.route(git_repo[0]["grf1"], "/git/{}".format(d))
+@app.route("/audio")
+@app.route("/audio/<artist>")
+@app.route("/audio/<artist>/<album>")
+@app.route("/audio/<artist>/<album>/<track>")
+def audio(artist = None, album = None, track = None):
+    title = "ELNAFO > Audio"
+    audiopath = os.path.join(os.getcwd(), "app/public/audio")
+    root = "Artists"
     
+    tracks = []
+    albums = []
+    artists = []
+    
+    if track:
+        url = os.path.join(audiopath, artist, album, track)
+
+        return send_file(url)
+
+    elif album:
+        tracks_ = os.listdir(os.path.join(audiopath, artist, album))
+        root = " - ".join([artist, album])
+        
+        for trackpath in tracks_:
+            filename, extension = os.path.splitext(trackpath)
+
+            if extension == ".flac":
+                tracks.append({
+                    "url": os.path.join("/audio", artist, album, trackpath),
+                    "name": trackpath
+                })
+
+        tracks = sorted(tracks, key = lambda item: item["name"])
+
+    elif artist:
+        albums_ = os.listdir(os.path.join(audiopath, artist))
+        root = artist
+
+        for albumpath in albums_:
+            albums.append({
+                "url": os.path.join("/audio", artist, albumpath),
+                "name": albumpath
+            })
+
+    else:
+        artists_ = os.listdir(audiopath)
+        root = "Artists"
+
+        for artistpath in artists_:
+            artists.append({
+                "url": os.path.join("/audio", artistpath),
+                "name": artistpath
+            })
+
+    return render_template("audio.html", 
+        title = title, root = root, artists = artists, albums = albums, tracks = tracks)

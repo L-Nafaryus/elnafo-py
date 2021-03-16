@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>{{ root }}</h3>
+<input value="Press" onclick="alert('Clack')" type="button">
+<div class="grid">
+    <section>
+        <ul>
+            {% if tracks %}
+                {% for track in tracks %}
+                <script>
+                    var sound = new Howl({
+                        src: ['{{ track.url }}']
+                    });
+
+                    function play() {
+                        let isplaying = sound.playing()
+
+                        if (!isplaying) {
+                            sound.play()
+                        } else {
+                            sound.pause()
+                        }
+                    }
+                </script>
+                <input value="{{ track.name }}" onclick="play()" type="button">
+                <!--<li>{{ track.name }}<audio controls preload="metadata" src="{{ track.url }}"></audio></li>-->
+                {% endfor %}
+            {% elif albums %}
+                {% for album in albums %}
+                    <li><a href="{{ album.url }}">{{ album.name }}</a></li>
+                {% endfor %}
+            {% else %}
+                {% for artist in artists %}
+                    <li><a href="{{ artist.url }}">{{ artist.name }}</a></li>
+                {% endfor %}           
+            {% endif %}
+        </ul>
+    </section>
+</div>
+{% endblock %}
