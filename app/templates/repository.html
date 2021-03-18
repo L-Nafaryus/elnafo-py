@@ -1,31 +1,5 @@
 {% extends "base.html" %}
 {% block content %}
-{% if not blob %}
-<div class="grid">
-    <section>
-        <header>
-            <div>Summary</div>
-        </header>
-        <div>
-            <div>description</div>
-            <div>{{ summary.desc }}</div>
-        </div>
-        <div>
-            <div>owner</div>
-            <div>{{ summary.owner }}</div>
-        </div>
-        <div>
-            <div>last change</div>
-            <div>{{ summary.lastchange }}</div>
-        </div>
-        <div>
-            <div>remotes</div>
-            <div>{{ summary.remotes }}</div>
-        </div>
-    </section>
-</div>
-<hr>
-{% endif %}
 <div class="grid">
     <section>
         <header>
@@ -58,8 +32,37 @@
         {% endif %}
     </section>
 </div>
-{% if readme %}
+{% if not blob %}
 <hr>
+<div class="grid">
+    <section>
+        <header>
+            <div>Summary</div>
+        </header>
+        <div>
+            <div>description</div>
+            <div>{{ summary.desc }}</div>
+        </div>
+        <div>
+            <div>owner</div>
+            <div>{{ summary.owner }}</div>
+        </div>
+        <div>
+            <div>last change</div>
+            <div>{{ summary.lastchange }}</div>
+        </div>
+        <div>
+            <div>remotes</div>
+            <div>{{ summary.remotes | safe }}</div>
+        </div>
+        <div>
+            <div>languages</div>
+            <div>{{ summary.languages | safe }}</div>
+        </div>
+    </section>
+</div>
+<hr>
+{% endif %}{% if readme %}
 <h3>README.md</h3>
 <div class="markdown">
     {{ readme | safe }}

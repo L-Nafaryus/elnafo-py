@@ -93,6 +93,7 @@ section {
 
 .grid section div {
     display: table-row;
+    padding-top: 10px;
 }
 
 .grid section div div {
@@ -121,7 +122,7 @@ section {
 }
 
 .markdown h1, h2, h3 {
-    padding: 20px 0px 20px 0px;
+    padding: 10px 0px 10px 0px;
 }
 
 .markdown p {

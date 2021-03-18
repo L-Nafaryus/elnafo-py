@@ -8,6 +8,8 @@ from git import Repo
 import pypandoc
 import mutagen
 import datetime
+import subprocess
+import json
 
 ###############################################################################
 #   Error handlers
@@ -90,13 +92,46 @@ def git_repository(repository, branch = "master", blob = None, tree = None):
     firstcommit = list(repo.iter_commits(curbranch))[-1]
     lastcommit = list(repo.iter_commits(curbranch))[0]
     entries = list(lastcommit.tree.traverse())
-    remotes = list(repo.remotes.origin.urls)
+
+    if repo.remotes:
+        remotes = list(repo.remotes.origin.urls)
+    else:
+        remotes = []
+
+    cloc = subprocess.Popen("cloc --git --json {}/".format(repopath), shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+    out, err = cloc.communicate()
+    print(err)
+    data = json.loads(str(out, "utf-8"))
+    langs = []
+
+    for key in data:
+        if not (key == "header" or key == "SUM"):
+            langs.append({
+                "name": key,
+                "code": data[key]["code"]
+            })
+
+    langs = sorted(langs, key = lambda item: item["code"])
+    langs.reverse()
+    languages = []
+    sum = 0
+
+    for lang in langs:
+        sum += lang["code"]
+
+    for lang in langs:
+        lang["percent"] = round(lang["code"] / sum * 100, 1)
+
+    for lang in langs:
+            languages.append("{} {}%".format(lang["name"], lang["percent"]))
+
 
     summary = {
         "desc": repo.description,
         "owner": firstcommit.author,
         "lastchange": str(lastcommit.authored_datetime),
-        "remotes": "<br>".join(remotes)
+        "remotes": "<br>".join(remotes),
+        "languages": "<br>".join(languages)
     }
 
     files = []
