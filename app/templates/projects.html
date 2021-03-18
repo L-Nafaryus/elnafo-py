@@ -1,29 +1,21 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="grid" id="layout">
+<div class="grid">
     <section>
-        <h3>Project</h3>
-        <ul>
-            {% for p in projects %}
-            <li><a href="{{p.url}}">{{p.name}}</a></li>
-            {% endfor %}
-        </ul>
-    </section>
-    <section>
-        <h3>Description</h3>
-        <ul>
-            {% for p in projects %}
-            <li>{{p.description}}</li>
-            {% endfor %}
-        </ul>
-    </section>
-    <section>
-        <h3>Last Changes</h3>
-        <ul>
-            {% for p in projects %}
-            <li>{{p.lastchanged}}</li>
-            {% endfor %}
-        </ul>
+        <header>
+            <div>Project</div>
+            <div>Description</div>
+            <div>Last Changes</div>
+        </header>
+        {% for p in projects %}
+        <div>
+            <div>
+                <a href="{{ p.url }}">{{ p.name }}</a>
+            </div>
+            <div>{{ p.description }}</div>
+            <div>{{ p.lastchanged }}</div>
+        </div>
+        {% endfor %}
     </section>
 </div>
 {% endblock %}

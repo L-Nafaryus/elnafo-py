@@ -1,40 +1,71 @@
 {% extends "base.html" %}
 {% block content %}
 <h3>{{ root }}</h3>
-<input value="Press" onclick="alert('Clack')" type="button">
+{% if tracks %}
+<div class="controls">
+    <button id="prevbtn">|&lt;</button>
+    <button id="playbtn">&gt;</button>
+    <button id="nextbtn">&gt;|</button>
+    <input type="range" min="1" max="100" value="100" id="volume">
+</div>
+{% endif %} 
+</h3>
 <div class="grid">
     <section>
-        <ul>
+        <header>
             {% if tracks %}
-                {% for track in tracks %}
-                <script>
-                    var sound = new Howl({
-                        src: ['{{ track.url }}']
-                    });
-
-                    function play() {
-                        let isplaying = sound.playing()
-
-                        if (!isplaying) {
-                            sound.play()
-                        } else {
-                            sound.pause()
-                        }
-                    }
-                </script>
-                <input value="{{ track.name }}" onclick="play()" type="button">
-                <!--<li>{{ track.name }}<audio controls preload="metadata" src="{{ track.url }}"></audio></li>-->
-                {% endfor %}
+            <div>#</div>
+            <div>Title</div>
+            <div>Duration</div>
             {% elif albums %}
-                {% for album in albums %}
-                    <li><a href="{{ album.url }}">{{ album.name }}</a></li>
-                {% endfor %}
+            <div>Title</div>
+            <div>Year</div>
             {% else %}
-                {% for artist in artists %}
-                    <li><a href="{{ artist.url }}">{{ artist.name }}</a></li>
-                {% endfor %}           
+            <div>Artist</div>
             {% endif %}
-        </ul>
+        </header>
+        
+        {% if tracks %}
+            {% for track in tracks %}
+            <div>
+                <div>
+                    {{ track.index + 1 }}
+                </div>
+                <div>
+                    <div id="track{{ track.index }}" class="track">
+                        <div id="title{{ track.index }}" class="title"></div>
+                    </div>
+                </div>
+                <div>
+                    {{ track.duration }}
+                </div>
+            </div>
+            {% endfor %}
+
+            <script src="/static/player.js"></script>
+            <script>
+                var player = new Player({{ tracks | safe }});
+            </script>
+        {% elif albums %}
+            {% for album in albums %}
+            <div>
+                <div>
+                    <a href="{{ album.url }}">{{ album.name }}</a>
+                </div>
+                <div>
+                    2019
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            {% for artist in artists %}
+                <div>
+                    <div>
+                        <a href="{{ artist.url }}">{{ artist.name }}</a>
+                    </div>
+                </div>
+            {% endfor %}           
+        {% endif %}
     </section>
 </div>
 {% endblock %}

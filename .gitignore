@@ -1,2 +1,3 @@
 __pycache__
-app/public/git
+app/public/*
+!app/public/.gitkeep

@@ -1,15 +1,24 @@
-* {
-    padding: 0;
-    margin: 0;
+/* * { padding: 0; margin: 0; } */
+
+html {
+    height: 100%;
 }
 
 body {
+    display: flex;
+    flex-direction: column;
     background-color: rgb(50, 50, 50);
     color: #ffffff;
     font-size: 14pt;
     font-family: sans-serif;
+    height: 100%;
     margin: 10px 40px 10px 40px;
 }
+
+.main {
+    margin: 16px;
+}
+
 
 /* Hor line */
 hr {
@@ -29,25 +38,23 @@ a {
 
 h1, h2, h3 {
     display: block;
+    line-height: 4vw;
 }
 /* Footer */
-footer {
-    display: block;
-    position: relative;
+.footer {
+    width: 100%;
+    height: 50px;
     bottom: 0;
     right: 0;
     left: 0;
-    /*height: 50px;*/
     border-top-width: 1px;
     border-top-style: solid;
     border-top-color: #555555;
-    margin-left: 40px;
-    margin-right: 40px;
-    margin-bottom: 10px;
     padding-top: 10px;
     font-size: 10pt;
     text-align: center;
     color: #888888;
+    margin-top: -20px;
 }
 
 section {
@@ -58,7 +65,7 @@ section {
 .grid {
     display: grid;
 	overflow: hidden;
-    grid-template-columns: repeat(3, 1fr);
+    /*grid-template-columns: repeat(3, 1fr);*/
     grid-gap: 10px;
 }
 
@@ -68,6 +75,28 @@ section {
 
 .grid ul li {
     overflow: hidden;
+}
+
+.grid section {
+    display: table;
+    margin-bottom: 20px;
+}
+
+.grid section header {
+    display: table-row;
+    height: 40px;
+}
+
+.grid section header div {
+    display: table-cell;
+}
+
+.grid section div {
+    display: table-row;
+}
+
+.grid section div div {
+    display: table-cell;
 }
 
 /* Converted markdown */
@@ -103,3 +132,75 @@ section {
 .file-tree {
     display: block;
 }
+
+/* Player */
+.track {
+    position: relative;
+    width: 100%;
+    height: 15%;
+    display: flex;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+  
+.track:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+  
+.track .title {
+    line-height: 4vw;
+    font-size: 14pt;
+    color: #fff;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.33);
+}
+
+.controls {
+    
+    position: relative;
+    width: 100%;
+    height: 50px;
+    margin-bottom: 40px;
+}
+
+#playbtn {
+    border-radius: 50%;
+    width: 50px;
+    height: 100%;
+    background-color: goldenrod;
+    border: 2px solid goldenrod;
+    font-size: 20pt;
+    font-weight: bold;
+}
+
+#playbtn:hover {
+    opacity: 0.7;
+}
+
+#prevbtn {
+    display: inline-block;
+    border: 2px solid goldenrod;
+    width: 50px;
+    height: 50%;
+    background-color: rgb(50, 50, 50);
+    color: #ffffff;
+    font-weight: bold;
+}
+
+#prevbtn:hover {
+    opacity: 0.7;
+}
+
+#nextbtn {
+    border: 2px solid goldenrod;
+    width: 50px;
+    height: 50%;
+    background-color: rgb(50, 50, 50);
+    color: #ffffff;
+    font-weight: bold;
+}
+
+#nextbtn:hover {
+    opacity: 0.7;
+}
+
+

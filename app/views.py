@@ -6,6 +6,8 @@ from app import app
 import os
 from git import Repo
 import pypandoc
+import mutagen
+import datetime
 
 ###############################################################################
 #   Error handlers
@@ -24,7 +26,7 @@ def not_found_error(error):
 def index():
     title = "ELNAFO"
     links = [
-        { 
+        {
             "url": "/doc",
             "desc": "Documentation"
         },
@@ -82,7 +84,7 @@ def git():
 def git_repository(repository, branch = "master", blob = None, tree = None):
     title = "ELNAFO > Git > {}".format(repository)
     repopath = os.path.join(os.getcwd(), "app/public/git", repository)
-    
+
     repo = Repo(repopath)
     curbranch = repo.heads[branch]
     firstcommit = list(repo.iter_commits(curbranch))[-1]
@@ -96,18 +98,18 @@ def git_repository(repository, branch = "master", blob = None, tree = None):
         "lastchange": str(lastcommit.authored_datetime),
         "remotes": "<br>".join(remotes)
     }
-    
+
     files = []
     readme = None
     blobcontent = None
     root = "./"
-    
+
     if blob:
         for entry in entries:
             if entry.type == "blob" and entry.path == blob:
                 blobcontent = repo.git.show("{}:{}".format(lastcommit.hexsha, entry.path))
                 root = "../{}".format(entry.path)
-    
+
     elif tree:
         for entry in entries:
             if entry.path == os.path.join(tree, entry.name):
@@ -116,13 +118,13 @@ def git_repository(repository, branch = "master", blob = None, tree = None):
 
                 elif entry.type == "tree":
                     url = os.path.join("/git", repository, branch, "tree", entry.path)
-                
+
                 files.append({
                     "url": url,
                     "name": entry.name
                 })
                 root = "../{}".format(tree)
-    
+
     else:
         for entry in entries:
             if entry.name == entry.path:
@@ -132,7 +134,7 @@ def git_repository(repository, branch = "master", blob = None, tree = None):
                     if entry.name == "README.md":
                         readmemd = repo.git.show("{}:{}".format(lastcommit.hexsha, entry.path))
                         readme = pypandoc.convert(readmemd, to = "html", format = "md")
-                        
+
                 elif entry.type == "tree":
                     url = os.path.join("/git", repository, branch, "tree", entry.path)
 
@@ -141,8 +143,8 @@ def git_repository(repository, branch = "master", blob = None, tree = None):
                     "name": entry.name
                 })
 
-    return render_template("repository.html", 
-        title = title, root = root, summary = summary, 
+    return render_template("repository.html",
+        title = title, root = root, summary = summary,
         blob = blobcontent, files = files, readme = readme)
 
 
@@ -158,11 +160,11 @@ def audio(artist = None, album = None, track = None):
     title = "ELNAFO > Audio"
     audiopath = os.path.join(os.getcwd(), "app/public/audio")
     root = "Artists"
-    
+
     tracks = []
     albums = []
     artists = []
-    
+
     if track:
         url = os.path.join(audiopath, artist, album, track)
 
@@ -171,17 +173,27 @@ def audio(artist = None, album = None, track = None):
     elif album:
         tracks_ = os.listdir(os.path.join(audiopath, artist, album))
         root = " - ".join([artist, album])
-        
+
         for trackpath in tracks_:
             filename, extension = os.path.splitext(trackpath)
 
             if extension == ".flac":
+                audiofile = mutagen.File(os.path.join(audiopath, artist, album, trackpath))
+                duration = str(datetime.timedelta(seconds = audiofile.info.length)).split(".")[0]
+
                 tracks.append({
+                    "index": 0,
                     "url": os.path.join("/audio", artist, album, trackpath),
-                    "name": trackpath
+                    "name": trackpath,
+                    "duration": duration
                 })
 
         tracks = sorted(tracks, key = lambda item: item["name"])
+        index = 0
+
+        for track in tracks:
+            track["index"] = index
+            index += 1
 
     elif artist:
         albums_ = os.listdir(os.path.join(audiopath, artist))
@@ -203,5 +215,5 @@ def audio(artist = None, album = None, track = None):
                 "name": artistpath
             })
 
-    return render_template("audio.html", 
+    return render_template("audio.html",
         title = title, root = root, artists = artists, albums = albums, tracks = tracks)

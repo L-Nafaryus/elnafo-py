@@ -1,50 +1,65 @@
 {% extends "base.html" %}
 {% block content %}
-<h3>Summary</h3>
-<hr>
+{% if not blob %}
 <div class="grid">
     <section>
-        <ul>
-            <li>description</li>
-            <li>owner</li>
-            <li>last change</li>
-            <li>remotes</li>
-        </ul>
-    </section>
-    <section>
-        <ul>
-            <li>{{ summary.desc }}</li>
-            <li>{{ summary.owner }}</li>
-            <li>{{ summary.lastchange }}</li>
-            <li>{{ summary.remotes }}</li>
-        </ul>
+        <header>
+            <div>Summary</div>
+        </header>
+        <div>
+            <div>description</div>
+            <div>{{ summary.desc }}</div>
+        </div>
+        <div>
+            <div>owner</div>
+            <div>{{ summary.owner }}</div>
+        </div>
+        <div>
+            <div>last change</div>
+            <div>{{ summary.lastchange }}</div>
+        </div>
+        <div>
+            <div>remotes</div>
+            <div>{{ summary.remotes }}</div>
+        </div>
     </section>
 </div>
 <hr>
-{% autoescape off %}
-<h3><code>{{ root | safe }}</code></h3>
-{% endautoescape %}
-<div class="grid" id="layout">
+{% endif %}
+<div class="grid">
     <section>
+        <header>
+            {% if blob %}
+            <div>{{ root | safe }}</div>
+            {% else %}
+            <div>{{ root | safe }}</div>
+            <div>Commit</div>
+            <div>Last change</div>
+            {% endif %}
+        </header>
         {% if blob %}
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.6.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script>
+        <script src="/static/highlightjs-line-numbers.js"></script>
+                <script>hljs.initLineNumbersOnLoad();</script>
         <pre>
             {% autoescape off %}
-            <code>
-{{ blob | safe }}
-            </code>
+            <code>{{ blob | safe }}</code>
             {% endautoescape %}
         </pre>
         {% else %}
-        <ul>
             {% for f in files %}
-            <li><a href="{{f.url}}">{{f.name}}</a></li>
+            <div>
+                <div><a href="{{f.url}}">{{f.name}}</a></div>
+                <div>asd</div>
+                <div>2 days ago</div>
+            </div>
             {% endfor %}
-        </ul>
         {% endif %}
     </section>
 </div>
-<hr>
 {% if readme %}
+<hr>
 <h3>README.md</h3>
 <div class="markdown">
     {{ readme | safe }}
