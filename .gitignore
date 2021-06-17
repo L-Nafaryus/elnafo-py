@@ -1,5 +1,7 @@
 __pycache__/
 logs/
 env/
+.env
+temp/
 app/public/*
 !app/public/.gitkeep

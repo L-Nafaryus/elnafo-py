@@ -2,3 +2,8 @@ Flask
 GitPython
 mutagen
 pypandoc
+python-dotenv
+python-dateutil
+requests
+twitch-python
+apscheduler

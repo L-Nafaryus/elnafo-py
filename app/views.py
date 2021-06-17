@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from flask import render_template, send_file
+from flask import render_template, send_file, request
 from app import app
 import os
 from git import Repo
@@ -10,19 +10,24 @@ import mutagen
 import datetime
 import subprocess
 import json
+from dotenv import dotenv_values
+import requests
+from dateutil import parser
 
-###############################################################################
+ENV = dotenv_values(".env")
+
+###
 #   Error handlers
-#
+##
 @app.errorhandler(404)
 def not_found_error(error):
     title = "404 Not found:c"
     return render_template("404.html", title = title), 404
 
 
-###############################################################################
+###
 #   Root route
-#
+##
 @app.route('/')
 @app.route('/index')
 def index():
@@ -54,9 +59,9 @@ def index():
     return render_template("index.html", title = title, links = links)
 
 
-###############################################################################
+###
 #   Git
-#
+##
 @app.route("/git")
 def git():
     title = "ELNAFO > Git"
@@ -183,8 +188,9 @@ def git_repository(repository, branch = "master", blob = None, tree = None):
         blob = blobcontent, files = files, readme = readme)
 
 
-###############################################################################
+###
 #   Audio
+##
 #   Concept: path > artist > album > track.extension
 #
 @app.route("/audio")
@@ -252,3 +258,93 @@ def audio(artist = None, album = None, track = None):
 
     return render_template("audio.html",
         title = title, root = root, artists = artists, albums = albums, tracks = tracks)
+
+
+###
+#   Webhooks
+##
+import twitch
+import atexit
+from apscheduler.schedulers.background import BackgroundScheduler
+
+global STREAM_STATUS
+STREAM_STATUS = False
+
+def webhooks_twitch():
+    user = "l_nafaryus"
+    helix = twitch.Helix(ENV["TWITCH_CLIENT_ID"], ENV["TWITCH_CLIENT_SECRET"])
+    u = helix.user(user)
+
+    if u.is_live:
+        if not STREAM_STATUS:
+            s = u.stream
+
+            endpoint = "http://localhost/webhooks/discord"
+            headers = { "Content-Type": "application/json" }
+
+            resp = requests.post(endpoint, headers = headers, data = json.dumps(s.data))
+            print(resp.content)
+
+            STREAM_STATUS = True
+            print(f"Twitch webhook: { user } is streaming now")
+
+    else:
+        STREAM_STATUS = False
+
+cron = BackgroundScheduler(daemon = True)
+cron.add_job(webhooks_twitch, "interval", seconds = 60)
+cron.start()
+atexit.register(lambda: cron.shutdown(wait=False))
+
+@app.route("/webhooks/discord", methods = ["POST"])
+def webhooks_discord():
+    data = request.get_json()#["data"][0]
+
+    endpoint = "https://discord.com/api/webhooks/849319825750884372/6PZkb89iD7zl00k9woZH4c2T0OGyMutssSDXedsrP3qnKRv6hKGlbQ0lXl2kfh72rqV9"
+    headers = {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+    }
+    date = parser.isoparse(data["started_at"])
+    body = {
+        "content": "New stream was detected!",
+        "embeds": [{
+            "title": "Stream",
+            "url": "https://www.twitch.tv/{}".format(data["user_login"]),
+            "description": data["title"],
+            "thumbnail": {
+                "url": "https://cdn.discordapp.com/avatars/849319825750884372/28bd2006bdcbe79a9858571eab593f10.png"
+            },
+            "fields": [
+                {
+                    "name": "\u200b",
+                    "value": "\u200b",
+                    "inline": "false"
+                },
+                {
+                    "name": "Human (may be)",
+                    "value": data["user_name"],
+                    "inline": "true"
+                },
+                {
+                    "name": "Playing",
+                    "value": data["game_name"],
+                    "inline": "true"
+                }
+            ],
+            "footer": {
+                "text": "{} at {}".format(date.date(), date.time())
+            }
+        }]
+    }
+    
+    resp = requests.post(endpoint, headers = headers, data = json.dumps(body))
+
+    return str(resp.content)
+
+###
+#   Subscriptions
+##
+#status, reason = subscribe_twitch("l_nafaryus")
+#print(f"Subscription Twitch: { status } : { reason }")
+
