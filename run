@@ -1,2 +1,0 @@
-#!/bin/sh
-exec gunicorn --workers 3 --bind unix:elnafo.sock -m 007 wsgi:app
