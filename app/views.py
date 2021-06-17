@@ -266,30 +266,41 @@ def audio(artist = None, album = None, track = None):
 import twitch
 import atexit
 from apscheduler.schedulers.background import BackgroundScheduler
+import toml
 
-global STREAM_STATUS
-STREAM_STATUS = False
+if not os.path.exists("logs/global.toml"):
+    with open("logs/global.toml", "w") as io:
+        toml.dump({
+            "STREAM_STATUS": False
+        }, io)
 
 def webhooks_twitch():
+    globalVars = toml.load(os.path.abspath("logs/global.toml"))
+
     user = "l_nafaryus"
     helix = twitch.Helix(ENV["TWITCH_CLIENT_ID"], ENV["TWITCH_CLIENT_SECRET"])
     u = helix.user(user)
 
     if u.is_live:
-        if not STREAM_STATUS:
+        if not globalVars["STREAM_STATUS"]:
             s = u.stream
 
             endpoint = "http://localhost/webhooks/discord"
             headers = { "Content-Type": "application/json" }
+            data = s.data
+            data["profile_image_url"] = u.data["profile_image_url"]
 
-            resp = requests.post(endpoint, headers = headers, data = json.dumps(s.data))
+            resp = requests.post(endpoint, headers = headers, data = json.dumps(data))
             print(resp.content)
 
-            STREAM_STATUS = True
+            globalVars["STREAM_STATUS"] = True
             print(f"Twitch webhook: { user } is streaming now")
 
     else:
-        STREAM_STATUS = False
+        globalVars["STREAM_STATUS"] = False
+
+    with open(os.path.abspath("logs/global.toml"), "w") as io:
+        toml.dump(globalVars, io)
 
 cron = BackgroundScheduler(daemon = True)
 cron.add_job(webhooks_twitch, "interval", seconds = 60)
@@ -313,7 +324,7 @@ def webhooks_discord():
             "url": "https://www.twitch.tv/{}".format(data["user_login"]),
             "description": data["title"],
             "thumbnail": {
-                "url": "https://cdn.discordapp.com/avatars/849319825750884372/28bd2006bdcbe79a9858571eab593f10.png"
+                "url": data["profile_image_url"]
             },
             "fields": [
                 {
@@ -332,6 +343,9 @@ def webhooks_discord():
                     "inline": "true"
                 }
             ],
+            "image": {
+                "url": data["thumbnail_url"].format(width = 1920, height = 1080)
+            },
             "footer": {
                 "text": "{} at {}".format(date.date(), date.time())
             }
@@ -339,7 +353,7 @@ def webhooks_discord():
     }
     
     resp = requests.post(endpoint, headers = headers, data = json.dumps(body))
-
+    print(resp.content)
     return str(resp.content)
 
 ###

@@ -10,7 +10,7 @@ _help()
 
 case $1 in
     clean)
-        git clean -fdx
+        rm -vrf app/__pycache__ logs/ env/
         ;;
 
     init)
