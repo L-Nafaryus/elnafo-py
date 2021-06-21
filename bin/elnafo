@@ -27,7 +27,8 @@ case $1 in
         mkdir -p "${DIR}/logs"
         echo $$ >"${DIR}/logs/elnafo.pid"
 
-        python -m app >"${DIR}/logs/app.log" 2>&1
+        #python -m app >"${DIR}/logs/app.log" 2>&1
+        uwsgi --ini "${DIR}/conf/wsgi.ini" >"${DIR}/logs/wsgi.log" 2>&1
         deactivate
 
         rm "${DIR}/logs/elnafo.pid"
