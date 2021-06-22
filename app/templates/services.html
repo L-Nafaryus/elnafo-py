@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="grid">
+    <section>
+        <header>
+            <div>Name</div>
+        </header>
+        {% for s in services %}
+        <div>
+            <div>
+                <a href="{{ s.url }}">{{ s.name }}</a>
+            </div>
+        </div>
+        {% endfor %}
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="grid">
+    <section>
+        <header>
+            <div>Name</div>
+            <div>Last Changes</div>
+        </header>
+        {% for f in files %}
+        <div>
+            <div>
+                <a href="{{ f.url }}">{{ f.name }}</a>
+            </div>
+            <div>{{ f.lastchanged }}</div>
+        </div>
+        {% endfor %}
+    </section>
+</div>
+{% endblock %}

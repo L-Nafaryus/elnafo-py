@@ -9,10 +9,18 @@
         <!--<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/styles/default.min.css">-->
         <link href="/static/gruvbox-dark.css" rel="stylesheet" type="text/css">
         <!--<link href="favicon.ico" rel="shortcut icon" type="image/x-icon">-->
+        <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
+        <link rel="shortcut icon" type="image/x-icon" href="/static/favicon.ico">
     </head>
     <body>
         <div class="main">
-            <h1>{{title}}</h1>
+            <h2>
+                <a href="/">{{title}}</a>
+                {% if subtitle %}
+                    {{subtitle}}
+                {% endif %}
+            </h2>
             <hr>
             {% block content %}
             {% endblock %}
