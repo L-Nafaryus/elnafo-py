@@ -12,4 +12,4 @@ BIND="127.0.0.1:5000"
 if [ -f $PID ]; then rm $PID; fi
 
 cd $ROOT
-. ${ROOT}/env/bin/activate && exec $GUNICORN --bind $BIND --pid=$PID --log-file $LOG --log-level $LEVEL --reload $APP
+. ${ROOT}/env/bin/activate && exec $GUNICORN --workers 3 --bind $BIND --pid=$PID --log-file $LOG --log-level $LEVEL --reload $APP

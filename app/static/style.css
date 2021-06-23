@@ -102,6 +102,49 @@ section {
     display: table-cell;
 }
 
+.textIcon {
+    width: 20px;
+    filter: invert(75%);
+    padding-right: 5px;
+}
+
+.image {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.image img {
+    display: block;
+    margin-left: auto;
+    margin-right:auto;
+}
+
+.video {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.video video {
+    height: 500px;
+    display: block;
+    width: 100%;
+}
+
+.audio {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.audio audio {
+    display: block;
+    width: 100%;
+}
+
+.codeBlock pre {
+    display: flex;
+    padding: 5px 5px 5px 5px;
+}
+
 /* Converted markdown */
 .markdown {
     display: block;
@@ -124,13 +167,46 @@ section {
 }
 
 .markdown h1, h2, h3 {
-    padding: 10px 0px 10px 0px;
+    padding: 0px 0px 5px 0px;
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-color: #555555;
+}
+
+.markdown code {
+    border-style: none;
+    font-weight: bold;
+    font-style: italic;
+}
+
+.markdown .sourceCode {
+    border-width: 1px;
+    border-style: solid;
+    border-color: #555555;
+    margin: 0px 0px 0px 0px;
+    background-color: #383838;
+}
+
+.markdown .sourceCode code {
+    border-style: none;
+    font-weight: normal;
+    font-style: normal;
+}
+
+.markdown .sourceCode pre {
+    padding: 5px 5px 5px 5px;
 }
 
 .markdown p {
     margin: 0px;
+    padding-bottom: 5px;
+    padding-top: 5px;
 }
 
+.hljs {
+    width: 100%;
+    font-size: 12px;
+}
 /* File tree */
 .file-tree {
     display: block;
@@ -205,5 +281,6 @@ section {
 #nextbtn:hover {
     opacity: 0.7;
 }
+
 
 

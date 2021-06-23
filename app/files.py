@@ -5,6 +5,7 @@ from flask import render_template, make_response, abort, send_file
 from app import app, ENV 
 import os, time
 import magic
+import base64
 
 @app.route("/files/")
 @app.route("/files/<path:filepath>")
@@ -17,24 +18,54 @@ def files(filepath = None):
 
     if not os.path.exists(path):
         abort(404)
-
+      
     if os.path.isfile(path):
-        mimetype = magic.from_file(path)
+        mimetype = magic.from_file(path, mime = True)
+        size = os.stat(path).st_size
+        param = {
+            "name": os.path.basename(path),
+            "mime": mimetype,
+            "minor": mimetype.split("/")[0],
+            "size": convertSize(size),
+            "url": os.path.join(root, filepath)
+        }
+        supported = [
+            "image/png",
 
-        if mimetype == "text/plain":
-            with open(path, "r") as io:
-                content = io.read()
+            "audio/flac",
+
+            "video/webm"
+        ]
         
-            return content
+        if size > 100 * 1024 * 1024:
+            param["content"] = "Too large file"
 
         else:
-            return send_file(path, mimetype = mimetype, as_attachment = False)
+            if mimetype == "text/plain":
+                with open(path, "r") as io:
+                    param["content"] = io.read()
+       
+            elif mimetype in supported:
+                with open(path, "rb") as io:
+                    encoded = base64.b64encode(io.read())
+                    raw = str(encoded)[2:-1]
+                    param["content"] = f"data:{ mimetype };base64,{ raw }"
+
+            else:
+                param["content"] = "Not supported"
+
+        return render_template(
+            "viewer.html", 
+            title = ENV["sitename"], 
+            subtitle = " > Files", 
+            param = param
+        )
 
     else:
         ls = os.listdir(path)
         files = []
         url = ""
-
+         
         if filepath:
             root +=  f"/{ filepath }"
         
@@ -43,7 +74,10 @@ def files(filepath = None):
             name = filename
             
             if os.path.isdir(os.path.join(path, filename)):
-                name += " /"
+                filetype = "directory"
+
+            else:
+                filetype = "file"
             
             stat = os.stat(os.path.join(path, filename))
             lastchanged = time.ctime(stat.st_mtime)
@@ -51,16 +85,36 @@ def files(filepath = None):
             files.append({
                 "url": url,
                 "name": name,
-                "lastchanged": lastchanged
+                "lastchanged": lastchanged,
+                "type": filetype
             })
+
+        files = sorted(files, key = lambda item: (item["type"], item["name"]), reverse = False)
 
         if filepath:
             files.insert(0, {
                 "url": "/".join(root.split("/")[ :-1]),
-                "name": ".. /",
-                "lastchanged": "-"
+                "name": "..",
+                "lastchanged": "",
+                "type": "directory"
             })
 
         return render_template("files.html", title = ENV["sitename"], subtitle = " > Files", files = files)
 
 
+def convertSize(st_size):
+    kb = st_size / 1024
+    mb = kb / 1024
+    gb = mb / 1024
+
+    if not int(gb) < 1:
+        return f"{ int(gb * 10) / 10 } GB"
+
+    elif not int(mb) < 1:
+        return f"{ int(mb * 10) / 10 } MB"
+
+    elif not int(kb) < 1:
+        return f"{ int(kb * 10) / 10 } KB"
+
+    else:
+        return f"{ st_size } B"

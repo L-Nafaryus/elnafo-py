@@ -9,6 +9,11 @@
         {% for f in files %}
         <div>
             <div>
+                {% if f.type == "file" %}
+                <img class="textIcon" src="/static/file.png">
+                {% else %}
+                <img class="textIcon" src="/static/folder.png">
+                {% endif %}
                 <a href="{{ f.url }}">{{ f.name }}</a>
             </div>
             <div>{{ f.lastchanged }}</div>

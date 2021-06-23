@@ -1,38 +1,43 @@
 {% extends "base.html" %}
 {% block content %}
+<h3>{{ root | safe }}</h3>
+
+{% if blob %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.6.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+<div class="codeBlock">
+    <pre>
+        {% autoescape off %}
+        <code>{{ blob | safe }}</code>
+        {% endautoescape %}
+    </pre>
+</div>
+
+{% else %}
 <div class="grid">
     <section>
         <header>
-            {% if blob %}
-            <div>{{ root | safe }}</div>
-            {% else %}
-            <div>{{ root | safe }}</div>
+            <div>Entry</div>
             <div>Commit</div>
             <div>Last change</div>
-            {% endif %}
         </header>
-        {% if blob %}
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.6.0/highlight.min.js"></script>
-        <script>hljs.highlightAll();</script>
-        <script src="/static/highlightjs-line-numbers.js"></script>
-                <script>hljs.initLineNumbersOnLoad();</script>
-        <pre>
-            {% autoescape off %}
-            <code>{{ blob | safe }}</code>
-            {% endautoescape %}
-        </pre>
-        {% else %}
-            {% for f in files %}
+        
+        {% for f in files %}
+        <div>
             <div>
-                <div><a href="{{f.url}}">{{f.name}}</a></div>
-                <div>asd</div>
-                <div>2 days ago</div>
+                {% if f.type == "blob" %}
+                <img class="textIcon" src="/static/file.png">
+                {% else %}
+                <img class="textIcon" src="/static/folder.png">
+                {% endif %}
+                <a href="{{f.url}}">{{f.name}}</a>
             </div>
-            {% endfor %}
-        {% endif %}
+            <div>{{ f.commit }}</div>
+            <div>{{ f.lastchange }}</div>
+        </div>
+        {% endfor %}
     </section>
 </div>
-{% if not blob %}
 <hr>
 <div class="grid">
     <section>
@@ -62,7 +67,9 @@
     </section>
 </div>
 <hr>
-{% endif %}{% if readme %}
+{% endif %}
+
+{% if readme %}
 <h3>README.md</h3>
 <div class="markdown">
     {{ readme | safe }}

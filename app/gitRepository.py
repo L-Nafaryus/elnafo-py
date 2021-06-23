@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from flask import render_template
+from flask import render_template, abort
 from app import app, ENV 
-import os
+import os, time
 from git import Repo
 import subprocess
 import json
@@ -37,6 +37,9 @@ def git():
 def git_repository(repository, branch = "master", blob = None, tree = None):
     repopath = os.path.join(ENV["public"], "git", repository)
 
+    if not os.path.exists(repopath):
+        abort(404)
+
     repo = Repo(repopath)
     curbranch = repo.heads[branch]
     firstcommit = list(repo.iter_commits(curbranch))[-1]
@@ -47,6 +50,8 @@ def git_repository(repository, branch = "master", blob = None, tree = None):
         remotes = list(repo.remotes.origin.urls)
     else:
         remotes = []
+
+    branches = [ branch.name for branch in repo.branches ]
 
     cloc = subprocess.Popen("cloc --git --json {}/".format(repopath), shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
     out, err = cloc.communicate()
@@ -79,21 +84,22 @@ def git_repository(repository, branch = "master", blob = None, tree = None):
     summary = {
         "desc": repo.description,
         "owner": firstcommit.author,
-        "lastchange": str(lastcommit.authored_datetime),
+        "lastchange": lastcommit.authored_datetime,
         "remotes": "<br>".join(remotes),
+        "branches": "<br>".join(branches),
         "languages": "<br>".join(languages)
     }
 
     files = []
     readme = None
     blobcontent = None
-    root = "./"
+    root = repository
 
     if blob:
         for entry in entries:
             if entry.type == "blob" and entry.path == blob:
                 blobcontent = repo.git.show("{}:{}".format(lastcommit.hexsha, entry.path))
-                root = "../{}".format(entry.path)
+                root = f"{ repository }/{ entry.path }"
 
     elif tree:
         for entry in entries:
@@ -104,11 +110,18 @@ def git_repository(repository, branch = "master", blob = None, tree = None):
                 elif entry.type == "tree":
                     url = os.path.join("/git", repository, branch, "tree", entry.path)
 
+                entrycommit = next(repo.iter_commits(paths = entry.path))
+                message = entrycommit.summary
+                date = timeAgo(entrycommit.committed_date)
+                
                 files.append({
                     "url": url,
-                    "name": entry.name
+                    "name": entry.name,
+                    "type": entry.type,
+                    "commit": message,
+                    "lastchange": date
                 })
-                root = "../{}".format(tree)
+                root = f"{ repository }/{ tree }"
 
     else:
         for entry in entries:
@@ -123,14 +136,62 @@ def git_repository(repository, branch = "master", blob = None, tree = None):
                 elif entry.type == "tree":
                     url = os.path.join("/git", repository, branch, "tree", entry.path)
 
+                entrycommit = next(repo.iter_commits(paths = entry.path))
+                message = entrycommit.summary
+                date = timeAgo(entrycommit.committed_date)
+                 
                 files.append({
                     "url": url,
-                    "name": entry.name
+                    "name": entry.name,
+                    "type": entry.type,
+                    "commit": message,
+                    "lastchange": date
                 })
 
+    files = sorted(files, key = lambda item: item["type"], reverse = True)
+
+    backroot = "/".join(root.split("/")[1:-1])
+    url = os.path.join("/git", repository)
+    
+    if backroot:
+        url = os.path.join("/git", repository, branch, "tree", "/".join(root.split("/")[1:-1]))
+    
+    if not root == repository:
+        files.insert(0, {
+            "url": url,
+            "name": "..",
+            "type": "tree"
+        })
+
     return render_template("repository.html",
-        title = ENV["sitename"], subtitle = " > Git > {}".format(repository), 
+        title = ENV["sitename"], subtitle = " > Git", 
         root = root, summary = summary,
         blob = blobcontent, files = files, readme = readme)
 
+
+def timeAgo(epoch):
+    seconds = time.time() - epoch
+    minutes = seconds / 60
+    hours = minutes / 60
+    days = hours / 24
+    months = days / 30
+    years = months / 12
+
+    if not years < 1:
+        return f"{ int(years) } years ago"
+
+    elif not months < 1:
+        return f"{ int(months) } months ago"
+    
+    elif not days < 1:
+        return f"{ int(days) } days ago"
+    
+    elif not hours < 1:
+        return f"{ int(hours) } hours ago"
+    
+    elif not minutes < 1:
+        return f"{ int(minutes) } minutes ago"
+    
+    else:
+        return f"{ int(seconds) } seconds ago"
 
