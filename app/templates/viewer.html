@@ -38,7 +38,7 @@
 {% elif param.minor == "image" %}
 {% autoescape off %}
 <div class="image">
-    <img src="data:{{ param.mime | safe }};base64,{{ param.content | safe }}"/>
+    <img src="{{ param.content | safe }}"/>
 </div>
 {% endautoescape %}
 
