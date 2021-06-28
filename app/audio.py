@@ -36,12 +36,15 @@ def audio(artist = None, album = None, track = None):
             if extension == ".flac":
                 audiofile = mutagen.File(os.path.join(audiopath, artist, album, trackpath))
                 duration = str(datetime.timedelta(seconds = audiofile.info.length)).split(".")[0]
-
+                fmt = audiofile.mime[0].split("/")[1]
+                name = ".".join(" ".join(trackpath.split(" ")[1: ]).split(".")[ :-1])
+                
                 tracks.append({
                     "index": 0,
                     "url": os.path.join("/audio", artist, album, trackpath),
-                    "name": trackpath,
-                    "duration": duration
+                    "name": name,
+                    "duration": duration,
+                    "format": fmt 
                 })
 
         tracks = sorted(tracks, key = lambda item: item["name"])
@@ -56,9 +59,11 @@ def audio(artist = None, album = None, track = None):
         root = artist
 
         for albumpath in albums_:
+            splited = albumpath.split(" ")
             albums.append({
                 "url": os.path.join("/audio", artist, albumpath),
-                "name": albumpath
+                "name": " ".join(splited[1: ]),
+                "year": splited[0]
             })
 
     else:

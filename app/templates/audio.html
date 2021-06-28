@@ -17,6 +17,7 @@
             <div>#</div>
             <div>Title</div>
             <div>Duration</div>
+            <div>Format</div>
             {% elif albums %}
             <div>Title</div>
             <div>Year</div>
@@ -39,6 +40,9 @@
                 <div>
                     {{ track.duration }}
                 </div>
+                <div>
+                    {{ track.format }}
+                </div>
             </div>
             {% endfor %}
 
@@ -54,7 +58,7 @@
                     <a href="{{ album.url }}">{{ album.name }}</a>
                 </div>
                 <div>
-                    2019
+                    {{ album.year }}
                 </div>
             </div>
             {% endfor %}
