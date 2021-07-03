@@ -1,65 +1,81 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="grid">
-    <section>
-        <header>
-            <div>Summary</div>
-        </header>
-        <div>
-            <div>Filename</div>
-            <div>{{ param.name }}</div>
-        </div>
-        <div>
-            <div>Mimetype</div>
-            <div>{{ param.mime }}</div>
-        </div>
-        <div>
-            <div>Size</div>
-            <div>{{ param.size }}</div>
-        </div>
-    </section>
-</div>
-<hr>
 
-{% if param.minor == "text" %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.6.0/highlight.min.js"></script>
-<script>hljs.highlightAll();</script>
-<div class="codeBlock">
-<pre>
+<section class="simple">
+    <h3>Summary</h3>
+
+    <div class="container">
+        <div class="row">
+            <div class="column left">
+                <span>Filename</span>
+            </div>
+            <div class="column left">
+                <span>{{ param.name }}</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="column left">
+                <span>Mimetype</span>
+            </div>
+            <div class="column left">
+                <span>{{ param.mime }}</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="column left">
+                <span>Size</span>
+            </div>
+            <div class="column left">
+                <span>{{ param.size }}</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="simple">
+    <h3>Content</h3>
+
+    {% if param.minor == "text" %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.6.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    <div class="codeBlock">
+    <pre>
+        {% autoescape off %}
+        <code>{{ param.content | safe }}</code>
+        {% endautoescape %}
+    </pre>
+    </div>
+
+    {% elif param.content == "Too large file" %}
+    <p>{{ param.content }}
+
+    {% elif param.minor == "image" %}
     {% autoescape off %}
-    <code>{{ param.content | safe }}</code>
+    <div class="image">
+        <img src="{{ param.content | safe }}"/>
+    </div>
     {% endautoescape %}
-</pre>
-</div>
 
-{% elif param.content == "Too large file" %}
-<p>{{ param.content }}
+    {% elif param.minor == "audio" %}
+    {% autoescape off %}
+    <div class="audio">
+        <audio controls src="{{ param.content | safe }}"/>
+    </div>
+    {% endautoescape %}
 
-{% elif param.minor == "image" %}
-{% autoescape off %}
-<div class="image">
-    <img src="{{ param.content | safe }}"/>
-</div>
-{% endautoescape %}
+    {% elif param.minor == "video" %}
+    {% autoescape off %}
+    <div class="video">
+        <video controls>
+            <source type="{{ param.mime | safe }}" src="{{ param.content | safe }}">
+        </video>
+    </div>
+    {% endautoescape %}
 
-{% elif param.minor == "audio" %}
-{% autoescape off %}
-<div class="audio">
-    <audio controls src="{{ param.content | safe }}"/>
-</div>
-{% endautoescape %}
+    {% else %}
+    <p>{{ param.content }}</p>
 
-{% elif param.minor == "video" %}
-{% autoescape off %}
-<div class="video">
-    <video controls>
-        <source type="{{ param.mime | safe }}" src="{{ param.content | safe }}">
-    </video>
-</div>
-{% endautoescape %}
+    {% endif %}
+</section>
 
-{% else %}
-<p>{{ param.content }}</p>
-
-{% endif %}
 {% endblock %}

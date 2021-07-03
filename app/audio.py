@@ -44,7 +44,7 @@ def audio(artist = None, album = None, track = None):
                     "url": os.path.join("/audio", artist, album, trackpath),
                     "name": name,
                     "duration": duration,
-                    "format": fmt 
+                    "format": fmt  
                 })
 
         tracks = sorted(tracks, key = lambda item: item["name"])
@@ -77,7 +77,7 @@ def audio(artist = None, album = None, track = None):
             })
 
     return render_template("audio.html",
-        title = ENV["sitename"], subtitle = " > Audio", 
+        title = ENV["sitename"], subtitle = "Audio", 
         root = root, artists = artists, albums = albums, tracks = tracks)
 
 

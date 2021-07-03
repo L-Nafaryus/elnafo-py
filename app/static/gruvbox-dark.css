@@ -65,14 +65,6 @@
 	user-select: none;
 }
 
-pre, code  {
-    white-space: pre-wrap;
-}
 
-code  {
-    border-width: 1px;
-    border-style: solid;
-    border-color: #555555;
-}
 
 

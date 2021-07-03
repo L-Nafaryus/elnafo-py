@@ -22,7 +22,7 @@ def git():
         repo = Repo(os.path.join(gitdir, pd))
         name = pd
         description = repo.description
-        lastchanged = str(repo.head.commit.authored_datetime)
+        lastchanged = timeAgo(repo.head.commit.committed_date)
 
         projects.append({
             "url": "git/{}".format(name),
@@ -31,7 +31,7 @@ def git():
             "lastchanged": lastchanged
         })
 
-    return render_template("projects.html", title = ENV["sitename"], subtitle = " > Git", projects = projects)
+    return render_template("projects.html", title = ENV["sitename"], subtitle = "Git", projects = projects)
 
 # TODO: branch changing
 @app.route("/git/<repository>")
@@ -80,16 +80,16 @@ def git_repository(repository, branch = "master", blob = None, tree = None):
     #for lang in langs:
     #    lang["percent"] = round(lang["code"] / sum * 100, 1)
 
-    #for lang in langs:
+    #for lang in langs: 
     #        languages.append("{} {}%".format(lang["name"], lang["percent"]))
-
-
+ 
+  
     summary = {
         "desc": repo.description,
         "owner": firstcommit.author,
-        "lastchange": lastcommit.authored_datetime,
-        "remotes": "<br>".join(remotes),
-        "branches": "<br>".join(branches),
+        "lastchanged": lastcommit.authored_datetime,
+        "remotes": " \\ ".join(remotes),
+        "branches": " \\ ".join(branches),
         "languages": "-" #"<br>".join(languages)
     }
 
@@ -122,7 +122,7 @@ def git_repository(repository, branch = "master", blob = None, tree = None):
                     "name": entry.name,
                     "type": entry.type,
                     "commit": message,
-                    "lastchange": date
+                    "lastchanged": date
                 })
                 root = f"{ repository }/{ tree }"
 
@@ -148,7 +148,7 @@ def git_repository(repository, branch = "master", blob = None, tree = None):
                     "name": entry.name,
                     "type": entry.type,
                     "commit": message,
-                    "lastchange": date
+                    "lastchanged": date
                 })
 
     files = sorted(files, key = lambda item: item["type"], reverse = True)
@@ -167,7 +167,7 @@ def git_repository(repository, branch = "master", blob = None, tree = None):
         })
 
     return render_template("repository.html",
-        title = ENV["sitename"], subtitle = " > Git", 
+        title = ENV["sitename"], subtitle = "Git", 
         root = root, summary = summary,
         blob = blobcontent, files = files, readme = readme)
 

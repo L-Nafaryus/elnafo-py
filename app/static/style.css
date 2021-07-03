@@ -1,106 +1,159 @@
-/* * { padding: 0; margin: 0; } */
+/*
+ *  Basic
+ */  
 
 html {
     height: 100%;
 }
 
 body {
-    display: flex;
-    flex-direction: column;
     background-color: rgb(50, 50, 50);
     color: #ffffff;
-    font-size: 14pt;
     font-family: sans-serif;
-    height: 100%;
-    margin: 10px 40px 10px 40px;
+    margin-left: 0px;
+    margin-right: 0px;
 }
 
-.main {
-    margin: 16px;
-}
-
-
-/* Hor line */
 hr {
     margin: 16px 0px 16px 0px;
 }
 
-/* Paragraph */
 p {
     margin: 16px;
 }
 
-/* Link */
 a {
     color: goldenrod;
     text-decoration: none;
 }
 
 h1, h2, h3 {
-    display: block;
-    line-height: 4vw;
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-color: #555555;
 }
 
 li {
     padding-bottom: 10px;
 }
-/* Footer */
-.footer {
+
+svg {
+    stroke: #888888;
+    fill: #888888;
+    padding-right: 8px;
+}
+
+/*
+ *  Grid container
+ */
+
+.container {
+  display: grid;
+  grid-template-rows: repeat(auto-fit, minmax(50px, 1fr));
+    border-width: 1px;
+    border-style: solid;
+    border-color: #555;
+}
+
+.container > .row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+  border-bottom-width: 1px;
+  border-width: 1px;
+  border-bottom-style: solid;
+  border-bottom-style: solid;
+  border-color: #555555;
+  padding-top: auto;
+  padding-bottom: auto;
+  padding-left: 10px;
+  padding: 10px;
+}
+
+.container > .row > .column {
+  display: grid;
+  align-items: center;
+}
+
+.container > .row > .column > span {
+}
+
+.container > .row.header {
+  font-weight: bold;
+}
+
+.column.right {
+  text-align: right;
+}
+
+.column.middle {
+}
+
+/*
+ *  Media
+ */
+
+@media (max-width: 500px) {
+  .column.middle > span {
+    display: none;
+  }
+  body {
+    font-size: 10pt;
+  }
+}
+
+/*
+ *  Special sections
+ */
+
+section.simple {
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 8px;
+  padding-right: 8px;
+  margin-bottom: 10px;
+}
+
+section.head {
+  border-bottom-style: solid;
+  border-bottom-color: #555555;
+  padding: 0px 20px 0px 20px;
+  margin-bottom: 25px;
+}
+
+section.head > span {
+  display: inline-block;
+}
+
+section.head > span > h2 {
+  border-style: none;
+}
+
+section.head > span > h3 {
+  border-style: none;
+}
+
+/*
+ *  Footer
+ */
+
+footer.footer {
     height: 50px;
-    border-top-width: 1px;
     border-top-style: solid;
     border-top-color: #555555;
     padding-top: 10px;
-    font-size: 10pt;
+    font-size: 8pt;
     text-align: center;
     color: #888888;
-    margin-top: -20px;
-    margin-left: 16px;
-    margin-right: 16px;
+    margin-top: 20px;
 }
 
-section {
-    display: block;
+footer.footer > span {
 }
 
-/*Grid*/
-.grid {
-    display: grid;
-	overflow: hidden;
-    /*grid-template-columns: repeat(3, 1fr);*/
-    grid-gap: 10px;
-}
-
-.grid ul {
-	overflow: hidden;
-}
-
-.grid ul li {
-    overflow: hidden;
-}
-
-.grid section {
-    display: table;
-    margin-bottom: 20px;
-}
-
-.grid section header {
-    display: table-row;
-    height: 40px;
-}
-
-.grid section header div {
-    display: table-cell;
-}
-
-.grid section div {
-    display: table-row;
-    padding-top: 10px;
-}
-
-.grid section div div {
-    display: table-cell;
-}
+/*
+ *  Just formatting
+ */
 
 .textIcon {
     width: 20px;
@@ -145,35 +198,33 @@ section {
     padding: 5px 5px 5px 5px;
 }
 
-/* Converted markdown */
-.markdown {
-    display: block;
-    position: relative;
-    bottom: 0;
-    right: 0;
-    left: 0;
-    /*height: 50px;*/
+code  {
     border-width: 1px;
     border-style: solid;
     border-color: #555555;
-    margin: 20px 10px 16px 10px;
-    padding: 0px 20px 20px 20px;
-    font-size: 12pt;
-    /*color: #888888;*/
 }
 
-.markdown ul {
+.file-tree {
+    display: block;
+}
+
+/* 
+ *  Converted markdown 
+ */
+
+.markdown {
+    border-width: 1px;
+    border-style: solid;
+    border-color: #555555;
+    padding: 0px 20px 20px 20px;
+    font-size: 8pt;
+}
+
+.markdown > ul {
     padding: 0px 0px 0px 20px;
 }
 
-.markdown h1, h2, h3 {
-    padding: 0px 0px 5px 0px;
-    border-bottom-width: 1px;
-    border-bottom-style: solid;
-    border-bottom-color: #555555;
-}
-
-.markdown code {
+.markdown > code {
     border-style: none;
     font-weight: bold;
     font-style: italic;
@@ -187,32 +238,35 @@ section {
     background-color: #383838;
 }
 
-.markdown .sourceCode code {
+.markdown .sourceCode > code {
     border-style: none;
     font-weight: normal;
     font-style: normal;
 }
 
-.markdown .sourceCode pre {
+.markdown .sourceCode > pre {
     padding: 5px 5px 5px 5px;
 }
 
-.markdown p {
+.markdown > p {
     margin: 0px;
     padding-bottom: 5px;
     padding-top: 5px;
 }
 
+/*
+ *  HLJS 
+ */
+
 .hljs {
     width: 100%;
     font-size: 12px;
 }
-/* File tree */
-.file-tree {
-    display: block;
-}
 
-/* Player */
+/* 
+ *  Audio player 
+ */
+
 .track {
     position: relative;
     width: 100%;
@@ -281,6 +335,4 @@ section {
 #nextbtn:hover {
     opacity: 0.7;
 }
-
-
 

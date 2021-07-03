@@ -1,78 +1,127 @@
 {% extends "base.html" %}
 {% block content %}
-<h3>{{ root | safe }}</h3>
+
+<section class="simple">
+    <h3>{{ root | safe }}</h3>
+</section>
 
 {% if blob %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.6.0/highlight.min.js"></script>
-<script>hljs.highlightAll();</script>
-<div class="codeBlock">
-    <pre>
-        {% autoescape off %}
-        <code>{{ blob | safe }}</code>
-        {% endautoescape %}
-    </pre>
-</div>
+<section class="simple">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.6.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    <div class="codeBlock">
+        <pre>
+            {% autoescape off %}
+            <code>{{ blob | safe }}</code>
+            {% endautoescape %}
+        </pre>
+    </div>
+</section>
 
 {% else %}
-<div class="grid">
-    <section>
-        <header>
-            <div>Entry</div>
-            <div>Commit</div>
-            <div>Last change</div>
-        </header>
-        
-        {% for f in files %}
-        <div>
-            <div>
-                {% if f.type == "blob" %}
-                <img class="textIcon" src="/static/file.png">
-                {% else %}
-                <img class="textIcon" src="/static/folder.png">
-                {% endif %}
-                <a href="{{f.url}}">{{f.name}}</a>
+<section class="simple">
+    <div class="container">
+        <div class="row header">
+            <div class="column left">
+                <span>Entry</span>
             </div>
-            <div>{{ f.commit }}</div>
-            <div>{{ f.lastchange }}</div>
+            <div class="column middle">
+                <span>Commit</span>
+            </div>
+            <div class="column right">
+                <span>
+                    <svg aria-hidden="true" viewBox="0 0 16 16" version="1.1" data-view-component="true" height="16" width="16">
+                        <path fill-rule="evenodd" d="M1.643 3.143L.427 1.927A.25.25 0 000 2.104V5.75c0 .138.112.25.25.25h3.646a.25.25 0 00.177-.427L2.715 4.215a6.5 6.5 0 11-1.18 4.458.75.75 0 10-1.493.154 8.001 8.001 0 101.6-5.684zM7.75 4a.75.75 0 01.75.75v2.992l2.028.812a.75.75 0 01-.557 1.392l-2.5-1A.75.75 0 017 8.25v-3.5A.75.75 0 017.75 4z"></path>
+                    </svg>
+                    Last Changed
+                </span>
+            </div>
+        </div>
+        {% for file in files %}
+        <div class="row">
+            <div class="column left">
+                <span>
+                    {% if file.type == "blob" %}
+                    <svg aria-label="File" aria-hidden="true" viewBox="0 0 16 16" version="1.1" data-view-component="true" height="16" width="16">
+                        <path fill-rule="evenodd" d="M3.75 1.5a.25.25 0 00-.25.25v11.5c0 .138.112.25.25.25h8.5a.25.25 0 00.25-.25V6H9.75A1.75 1.75 0 018 4.25V1.5H3.75zm5.75.56v2.19c0 .138.112.25.25.25h2.19L9.5 2.06zM2 1.75C2 .784 2.784 0 3.75 0h5.086c.464 0 .909.184 1.237.513l3.414 3.414c.329.328.513.773.513 1.237v8.086A1.75 1.75 0 0112.25 15h-8.5A1.75 1.75 0 012 13.25V1.75z"></path>
+                    </svg>
+                    {% else %}
+                    <svg aria-label="Directory" aria-hidden="true" viewBox="0 0 16 16" version="1.1" data-view-component="true" height="16" width="16">
+                        <path fill-rule="evenodd" d="M1.75 1A1.75 1.75 0 000 2.75v10.5C0 14.216.784 15 1.75 15h12.5A1.75 1.75 0 0016 13.25v-8.5A1.75 1.75 0 0014.25 3h-6.5a.25.25 0 01-.2-.1l-.9-1.2c-.33-.44-.85-.7-1.4-.7h-3.5z"></path>
+                    </svg>
+                    {% endif %}
+                    <a href="{{ file.url }}">{{ file.name }}</a>
+                </span>
+            </div>
+            <div class="column middle">
+                <span>{{ file.commit }}</span>
+            </div>
+            <div class="column right">
+                <span>{{ file.lastchanged }}</span>
+            </div>
         </div>
         {% endfor %}
-    </section>
-</div>
-<hr>
-<div class="grid">
-    <section>
-        <header>
-            <div>Summary</div>
-        </header>
-        <div>
-            <div>description</div>
-            <div>{{ summary.desc }}</div>
+    </div>
+</section>
+
+<section class="simple">
+    <h3>Summary</h3>
+
+    <div class="container">
+        <div class="row">
+            <div class="column left">
+                <span>Description</span>
+            </div>
+            <div class="column left">
+                <span>{{ summary.desc }}</span>
+            </div>
         </div>
-        <div>
-            <div>owner</div>
-            <div>{{ summary.owner }}</div>
+        <div class="row">
+            <div class="column left">
+                <span>Owner</span>
+            </div>
+            <div class="column left">
+                <span>{{ summary.owner }}</span>
+            </div>
         </div>
-        <div>
-            <div>last change</div>
-            <div>{{ summary.lastchange }}</div>
+        <div class="row">
+            <div class="column left">
+                <span>Remotes</span>
+            </div>
+            <div class="column left">
+                <span>{{ summary.remotes | safe }}</span>
+            </div>
         </div>
-        <div>
-            <div>remotes</div>
-            <div>{{ summary.remotes | safe }}</div>
+        <div class="row">
+            <div class="column left">
+                <span>
+                    <svg aria-hidden="true" viewBox="0 0 16 16" version="1.1" data-view-component="true" height="16" width="16">
+                        <path fill-rule="evenodd" d="M11.75 2.5a.75.75 0 100 1.5.75.75 0 000-1.5zm-2.25.75a2.25 2.25 0 113 2.122V6A2.5 2.5 0 0110 8.5H6a1 1 0 00-1 1v1.128a2.251 2.251 0 11-1.5 0V5.372a2.25 2.25 0 111.5 0v1.836A2.492 2.492 0 016 7h4a1 1 0 001-1v-.628A2.25 2.25 0 019.5 3.25zM4.25 12a.75.75 0 100 1.5.75.75 0 000-1.5zM3.5 3.25a.75.75 0 111.5 0 .75.75 0 01-1.5 0z"></path>
+                    </svg>
+                    Branches
+                </span>
+            </div>
+            <div class="column left">
+                <span>{{ summary.branches }}</span>
+            </div>
         </div>
-        <div>
-            <div>languages</div>
-            <div>{{ summary.languages | safe }}</div>
-        </div>
-    </section>
-</div>
-<hr>
+    </div>
+</section>
+
 {% endif %}
 
 {% if readme %}
-<h3>README.md</h3>
-<div class="markdown">
-    {{ readme | safe }}
-</div>
+<section class="simple">
+    <h3>
+        <svg aria-hidden="true" viewBox="0 0 16 16" version="1.1" data-view-component="true" height="16" width="16">
+            <path fill-rule="evenodd" d="M0 1.75A.75.75 0 01.75 1h4.253c1.227 0 2.317.59 3 1.501A3.744 3.744 0 0111.006 1h4.245a.75.75 0 01.75.75v10.5a.75.75 0 01-.75.75h-4.507a2.25 2.25 0 00-1.591.659l-.622.621a.75.75 0 01-1.06 0l-.622-.621A2.25 2.25 0 005.258 13H.75a.75.75 0 01-.75-.75V1.75zm8.755 3a2.25 2.25 0 012.25-2.25H14.5v9h-3.757c-.71 0-1.4.201-1.992.572l.004-7.322zm-1.504 7.324l.004-5.073-.002-2.253A2.25 2.25 0 005.003 2.5H1.5v9h3.757a3.75 3.75 0 011.994.574z"></path>
+        </svg> 
+        README.md
+    </h3>
+    <div class="markdown">
+        {{ readme | safe }}
+    </div>
+</section>
 {% endif %}
+
 {% endblock %}

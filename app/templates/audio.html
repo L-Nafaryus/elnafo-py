@@ -1,78 +1,91 @@
 {% extends "base.html" %}
 {% block content %}
-<h3>{{ root }}</h3>
+
 {% if tracks %}
-<div class="controls">
-    <button id="prevbtn">|&lt;</button>
-    <button id="playbtn">&gt;</button>
-    <button id="nextbtn">&gt;|</button>
-    <input type="range" min="1" max="100" value="100" id="volume">
-</div>
-{% endif %} 
-</h3>
-<div class="grid">
-    <section>
-        <header>
-            {% if tracks %}
-            <div>#</div>
-            <div>Title</div>
-            <div>Duration</div>
-            <div>Format</div>
-            {% elif albums %}
-            <div>Title</div>
-            <div>Year</div>
-            {% else %}
-            <div>Artist</div>
-            {% endif %}
-        </header>
-        
-        {% if tracks %}
-            {% for track in tracks %}
-            <div>
-                <div>
-                    {{ track.index + 1 }}
-                </div>
-                <div>
-                    <div id="track{{ track.index }}" class="track">
-                        <div id="title{{ track.index }}" class="title"></div>
-                    </div>
-                </div>
-                <div>
-                    {{ track.duration }}
-                </div>
-                <div>
-                    {{ track.format }}
-                </div>
+
+<section class="simple">
+    <h3>{{ root }}</h3>
+
+    <div class="container">
+        <div class="row header">
+            <div class="column left">
+                <span>Title</span>
             </div>
-            {% endfor %}
+            <div class="column right">
+                <span>Duration</span>
+            </div>
+            <div class="column right">
+                <span>#</span>
+            </div>
+        </div>
+        {% for track in tracks %}
+        <div class="row header">
+            <div class="column left">
+                <span>{{ track.name }}</span>
+            </div>
+            <div class="column right">
+                <span>{{ track.duration }}</span>
+            </div>
+            <div class="column right">
+                <span>{{ track.index + 1}}</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
 
-            <script src="/static/player.js"></script>
-            <script>
-                var player = new Player({{ tracks | safe }});
-            </script>
+{% elif albums %}
 
-        {% elif albums %}
-            {% for album in albums %}
-            <div>
-                <div>
+<section class="simple">
+    <h3>{{ root }}</h3>
+
+    <div class="container">
+        <div class="row header">
+            <div class="column left">
+                <span>Title</span>
+            </div>
+            <div class="column right">
+                <span>Year</span>
+            </div>
+        </div>
+        {% for album in albums %}
+        <div class="row header">
+            <div class="column left">
+                <span>
                     <a href="{{ album.url }}">{{ album.name }}</a>
-                </div>
-                <div>
-                    {{ album.year }}
-                </div>
+                </span>
             </div>
-            {% endfor %}
+            <div class="column right">
+                <span>{{ album.year }}</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
 
-        {% else %}
-            {% for artist in artists %}
-                <div>
-                    <div>
-                        <a href="{{ artist.url }}">{{ artist.name }}</a>
-                    </div>
-                </div>
-            {% endfor %}           
+{% else %}
 
-        {% endif %}
-    </section>
-</div>
+<section class="simple">
+    <h3>{{ root }}</h3>
+
+    <div class="container">
+        <div class="row header">
+            <div class="column left">
+                <span>Artist</span>
+            </div>
+        </div>
+        {% for artist in artists %}
+        <div class="row header">
+            <div class="column left">
+                <span>
+                    <a href="{{ artist.url }}">{{ artist.name }}</a>
+                </span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+{% endif %}
+
 {% endblock %}

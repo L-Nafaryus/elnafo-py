@@ -35,7 +35,7 @@ def files(filepath = None):
             "audio/flac",
 
             "video/webm"
-        ]
+        ] 
          
         if size > 100 * 1024 * 1024:
             param["content"] = "Too large file"
@@ -57,7 +57,7 @@ def files(filepath = None):
         return render_template(
             "viewer.html", 
             title = ENV["sitename"], 
-            subtitle = " > Files", 
+            subtitle = "Files", 
             param = param
         )
 
@@ -99,7 +99,7 @@ def files(filepath = None):
                 "type": "directory"
             })
 
-        return render_template("files.html", title = ENV["sitename"], subtitle = " > Files", files = files)
+        return render_template("files.html", title = ENV["sitename"], subtitle = "Files", files = files)
 
 
 def convertSize(st_size):

@@ -16,6 +16,6 @@ def services():
     return render_template(
         "services.html", 
         title = ENV["sitename"], 
-        subtitle = " > Services",
+        subtitle = "Services",
         services = srvs
     )
