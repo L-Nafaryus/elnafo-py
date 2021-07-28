@@ -21,7 +21,7 @@
         {% for track in tracks %}
         <div class="row header">
             <div class="column left">
-                <span>{{ track.name }}</span>
+                <span><a href="{{ track.url }}">{{ track.name }}</a></span>
             </div>
             <div class="column right">
                 <span>{{ track.duration }}</span>

@@ -10,3 +10,4 @@ apscheduler
 toml
 python-magic
 gunicorn
+peewee

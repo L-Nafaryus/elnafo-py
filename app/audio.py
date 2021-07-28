@@ -1,13 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from flask import render_template, send_file
-from app import app, ENV 
+from flask import render_template, send_file, request
+from app import app, ENV
 import os
 import magic
 import mutagen
 import datetime
+from app.models import database, Items
+import logging
+from urllib.parse import quote, unquote
+from app.files import convertSize, base64
 
+# TODO: slash in names
 @app.route("/audio")
 @app.route("/audio/<artist>")
 @app.route("/audio/<artist>/<album>")
@@ -16,65 +21,116 @@ def audio(artist = None, album = None, track = None):
     audiopath = os.path.join(ENV["public"], "audio")
     root = "Artists"
 
+    artist = request.args.get("artist")
+    album = request.args.get("album")
+    track = request.args.get("track")
+    
     tracks = []
     albums = []
     artists = []
 
-    if track:
-        url = os.path.join(audiopath, artist, album, track)
-        mimetype = magic.from_file(url)
+    db = database.init(os.path.join(ENV["public"], "databases", "audio.db"))
+
+    if track and album and artist:
+        query = (Items
+            .select(Items.path)
+            .distinct(True)
+            .where(
+                Items.albumartist == artist,
+                Items.album == album,
+                Items.title == track
+            )
+        )
+
+        if query.exists():
+            for item in query.dicts():
+                splitted = str(item["path"], "utf-8").split("/")
+                url = os.path.join(audiopath, *splitted[splitted.index("audio") + 1: ]) 
+                mimetype = magic.from_file(url, mime = True)
+
+                size = os.stat(url).st_size
+                param = {
+                    "name": track,
+                    "mime": mimetype,
+                    "minor": mimetype.split("/")[0],
+                    "size": convertSize(size),
+                    "url": url 
+                }
+                 
+                if size > 100 * 1024 * 1024:
+                    param["content"] = "Too large file"
+
+                else:
+                    with open(url, "rb") as io:
+                        encoded = base64.b64encode(io.read())
+                        raw = str(encoded)[2:-1]
+                        param["content"] = f"data:{ mimetype };base64,{ raw }"
+
+
+                return render_template(
+                    "viewer.html", 
+                    title = ENV["sitename"], 
+                    subtitle = "Audio", 
+                    param = param
+                )
 
         return send_file(url, mimetype = mimetype)
 
-    elif album:
-        tracks_ = os.listdir(os.path.join(audiopath, artist, album))
-        root = " - ".join([artist, album])
-
-        for trackpath in tracks_:
-            filename, extension = os.path.splitext(trackpath)
-
-            if extension == ".flac":
-                audiofile = mutagen.File(os.path.join(audiopath, artist, album, trackpath))
-                duration = str(datetime.timedelta(seconds = audiofile.info.length)).split(".")[0]
-                fmt = audiofile.mime[0].split("/")[1]
-                name = ".".join(" ".join(trackpath.split(" ")[1: ]).split(".")[ :-1])
-                
-                tracks.append({
-                    "index": 0,
-                    "url": os.path.join("/audio", artist, album, trackpath),
-                    "name": name,
-                    "duration": duration,
-                    "format": fmt  
-                })
-
-        tracks = sorted(tracks, key = lambda item: item["name"])
-        index = 0
-
-        for track in tracks:
-            track["index"] = index
-            index += 1
+    elif album and artist:
+        query = (Items
+            .select(Items.album, Items.track, Items.title, Items.length, Items.path)
+            .distinct(True)
+            .where(
+                Items.albumartist == artist,
+                Items.album == album
+            )
+            .order_by(Items.track)
+        )
+ 
+        if query.exists():
+            for item in query.dicts():
+                tracks.append(dict(
+                    index = item["track"] - 1,
+                    url = f"/audio?artist={ artist }&album={ item['album'] }&track={ item['title'] }",
+                    name = item["title"],
+                    duration = str(datetime.timedelta(seconds = item["length"])).split(".")[0],
+                    format = ""
+                ))
 
     elif artist:
-        albums_ = os.listdir(os.path.join(audiopath, artist))
-        root = artist
+        query = (Items
+            .select(Items.album, Items.year)
+            .distinct(True)
+            .where(
+                Items.albumartist == artist
+            )
+            .order_by(Items.year)
+        )
 
-        for albumpath in albums_:
-            splited = albumpath.split(" ")
-            albums.append({
-                "url": os.path.join("/audio", artist, albumpath),
-                "name": " ".join(splited[1: ]),
-                "year": splited[0]
-            })
+        if query.exists():
+            for item in query.dicts():
+                albums.append(dict(
+                    url = f"/audio?artist={ artist }&album={ item['album'] }",
+                    name = item["album"],
+                    year = item["year"]
+                ))
 
     else:
-        artists_ = os.listdir(audiopath)
-        root = "Artists"
+        query = (Items
+            .select(Items.albumartist)
+            .distinct(True)
+            .order_by(Items.albumartist)
+        )
+        
 
-        for artistpath in artists_:
-            artists.append({
-                "url": os.path.join("/audio", artistpath),
-                "name": artistpath
-            })
+        if query.exists():
+            for item in query.dicts():
+                
+                artists.append(dict(
+                    url = f"/audio?artist={ item['albumartist'] }",
+                    name = item["albumartist"]
+                ))
+
 
     return render_template("audio.html",
         title = ENV["sitename"], subtitle = "Audio", 
