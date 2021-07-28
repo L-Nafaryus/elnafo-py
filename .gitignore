@@ -5,3 +5,4 @@ env/
 temp/
 app/public/*
 !app/public/.gitkeep
+target/

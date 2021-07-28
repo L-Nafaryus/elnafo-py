@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>ELNAFO</title>
+        <meta name="viewport" content="width=device-width">
+        <link href="/static/style.css" rel="stylesheet" type="text/css" media="all">
+        <link href="/static/gruvbox-dark.css" rel="stylesheet" type="text/css">
+        <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
+        <link rel="shortcut icon" type="image/x-icon" href="/static/favicon.ico">
+        <style media="screen">
+            #logo {
+                background-image: url("/static/favicon-32x32.png");
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <div class="container">
+                <a id="logo" href="/">
+                    <span>Home</span>
+                </a>
+                <nav class="main">
+                    <a href="/audio">audio</a>
+                    <a href="/files">files</a>
+                    <a href="/git">git</a>
+                    <a href="/services">services</a>
+                </nav>
+                <div class="centered">
+                    <h1>
+                        <a href="/">Home</a>
+                    </h1>
+                    <h4>Some description</h4>
+                </div>
+            </div>
+        </header>
+
+        {% block content %}
+        {% endblock %}
+        
+        <footer class="grid light">
+            <div class="container">
+                <div class="col">
+                    <a href="/about">© 2021 L-Nafaryus</a>
+                </div>
+            </div>
+        </footer>
+    </body>
+</html>

@@ -1,0 +1,22 @@
+{% extends "base" %}
+{% block content %}
+<section class="grid tight blocky-code">
+    <div id="sidebar">
+        <nav>
+            <div class="toc">
+                <ul><li>ASD</li></ul>
+            </div>
+        </nav>
+    </div>
+    <article>
+        <h2>Hello there.</h2>
+        <p>Welcome to elnafo.(net, local, ...)! What's up? Check something:</p>
+        <ul>
+            <li>First</li>
+        </ul>
+        <p>Welcome to elnafo.(net, local, ...)! What's up? Check something:</p>
+        <hr>
+        End of test page!
+    </article>
+</section>
+{% endblock %}
