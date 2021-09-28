@@ -6,6 +6,8 @@ from app import app, ENV
 import os, time
 import magic
 import base64
+from app.utils import timeAgo, convertSize
+
 
 @app.route("/files/")
 @app.route("/files/<path:filepath>")
@@ -80,7 +82,7 @@ def files(filepath = None):
                 filetype = "file"
             
             stat = os.stat(os.path.join(path, filename))
-            lastchanged = time.ctime(stat.st_mtime)
+            lastchanged = timeAgo(stat.st_mtime)
 
             files.append({
                 "url": url,
@@ -102,19 +104,3 @@ def files(filepath = None):
         return render_template("files.html", title = ENV["sitename"], subtitle = "Files", files = files)
 
 
-def convertSize(st_size):
-    kb = st_size / 1024
-    mb = kb / 1024
-    gb = mb / 1024
-
-    if not int(gb) < 1:
-        return f"{ int(gb * 10) / 10 } GB"
-
-    elif not int(mb) < 1:
-        return f"{ int(mb * 10) / 10 } MB"
-
-    elif not int(kb) < 1:
-        return f"{ int(kb * 10) / 10 } KB"
-
-    else:
-        return f"{ st_size } B"

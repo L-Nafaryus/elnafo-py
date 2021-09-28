@@ -8,6 +8,7 @@ from git import Repo
 import subprocess
 import json
 import pypandoc
+from app.utils import timeAgo, rst2html 
 
 @app.route("/git")
 def git():
@@ -35,6 +36,7 @@ def git():
 
 # TODO: branch changing
 @app.route("/git/<repository>")
+@app.route("/git/<repository>/<branch>/tree")
 @app.route("/git/<repository>/<branch>/blob/<path:blob>")
 @app.route("/git/<repository>/<branch>/tree/<path:tree>")
 def git_repository(repository, branch = "master", blob = None, tree = None):
@@ -83,6 +85,14 @@ def git_repository(repository, branch = "master", blob = None, tree = None):
     #for lang in langs: 
     #        languages.append("{} {}%".format(lang["name"], lang["percent"]))
  
+    for n, branch in enumerate(branches):
+        if branch == "master":
+            branch_url = os.path.join("/git", repository)
+ 
+        else:
+            branch_url = os.path.join("/git", repository, branch, "tree")
+
+        branches[n] = f'<a href="{ branch_url }">{ branch }</a>'
   
     summary = {
         "desc": repo.description,
@@ -136,6 +146,11 @@ def git_repository(repository, branch = "master", blob = None, tree = None):
                         readmemd = repo.git.show("{}:{}".format(lastcommit.hexsha, entry.path))
                         readme = pypandoc.convert(readmemd, to = "html", format = "md")
 
+                    elif entry.name == "README.rst":
+                        readmerst = repo.git.show("{}:{}".format(lastcommit.hexsha, entry.path))
+                        readme = rst2html(readmerst)
+
+
                 elif entry.type == "tree":
                     url = os.path.join("/git", repository, branch, "tree", entry.path)
 
@@ -155,10 +170,13 @@ def git_repository(repository, branch = "master", blob = None, tree = None):
 
     backroot = "/".join(root.split("/")[1:-1])
     url = os.path.join("/git", repository)
-    
+
+    if not branch == "master":
+        url = os.path.join(url, branch, "tree")
+      
     if backroot:
         url = os.path.join("/git", repository, branch, "tree", "/".join(root.split("/")[1:-1]))
-    
+     
     if not root == repository:
         files.insert(0, {
             "url": url,
@@ -171,30 +189,4 @@ def git_repository(repository, branch = "master", blob = None, tree = None):
         root = root, summary = summary,
         blob = blobcontent, files = files, readme = readme)
 
-
-def timeAgo(epoch):
-    seconds = time.time() - epoch
-    minutes = seconds / 60
-    hours = minutes / 60
-    days = hours / 24
-    months = days / 30
-    years = months / 12
-
-    if not years < 1:
-        return f"{ int(years) } years ago"
-
-    elif not months < 1:
-        return f"{ int(months) } months ago"
-    
-    elif not days < 1:
-        return f"{ int(days) } days ago"
-    
-    elif not hours < 1:
-        return f"{ int(hours) } hours ago"
-    
-    elif not minutes < 1:
-        return f"{ int(minutes) } minutes ago"
-    
-    else:
-        return f"{ int(seconds) } seconds ago"
 

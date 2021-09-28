@@ -1,6 +1,8 @@
 Flask
 GitPython
 mutagen
+docutils
+pygments
 pypandoc
 python-dotenv
 python-dateutil

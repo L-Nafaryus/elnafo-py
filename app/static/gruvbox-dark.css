@@ -2,7 +2,7 @@
     display:block;
     overflow-x:auto;
     padding:.5em;
-    background: #383838;
+    background: var(--foreground-color);
 }
 
 .hljs,.hljs-subst {

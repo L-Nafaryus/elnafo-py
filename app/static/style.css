@@ -2,16 +2,25 @@
  *  Basic
  */  
 
+:root {
+    --background-color: #23252f;
+    --foreground-color: #282a36;
+    --text-color: #fff;
+    --link-color: #89e6fa;
+    --hidden-color: #555;
+}
+
 html {
     height: 100%;
 }
 
 body {
-    background-color: rgb(50, 50, 50);
-    color: #ffffff;
+    background-color: var(--background-color);
+    color: var(--text-color);
     font-family: sans-serif;
     margin-left: 0px;
     margin-right: 0px;
+    margin-top: 0px;
 }
 
 hr {
@@ -19,18 +28,18 @@ hr {
 }
 
 p {
-    margin: 16px;
+    margin: 0px;
 }
 
 a {
-    color: goldenrod;
+    color: var(--link-color);
     text-decoration: none;
 }
 
 h1, h2, h3 {
     border-bottom-width: 1px;
     border-bottom-style: solid;
-    border-bottom-color: #555555;
+    border-bottom-color: var(--hidden-color);
 }
 
 li {
@@ -78,7 +87,8 @@ svg {
 }
 
 .container > .row.header {
-  font-weight: bold;
+    background-color: var(--foreground-color);
+    font-weight: bold;
 }
 
 .column.right {
@@ -115,10 +125,11 @@ section.simple {
 }
 
 section.head {
-  border-bottom-style: solid;
-  border-bottom-color: #555555;
-  padding: 0px 20px 0px 20px;
-  margin-bottom: 25px;
+    background-color: var(--foreground-color);
+    border-bottom-style: solid;
+    border-bottom-color: var(--hidden-color);
+    padding: 0px 20px 0px 20px;
+    margin-bottom: 25px;
 }
 
 section.head > span {
@@ -215,9 +226,9 @@ code  {
 .markdown {
     border-width: 1px;
     border-style: solid;
-    border-color: #555555;
+    border-color: var(--hidden-color);
     padding: 0px 20px 20px 20px;
-    font-size: 8pt;
+    /* font-size: 8pt; */
 }
 
 .markdown > ul {
@@ -235,7 +246,7 @@ code  {
     border-style: solid;
     border-color: #555555;
     margin: 0px 0px 0px 0px;
-    background-color: #383838;
+    background-color: var(--foreground-color);
 }
 
 .markdown .sourceCode > code {
