@@ -23,7 +23,7 @@ def git():
         repo = Repo(os.path.join(gitdir, pd))
         name = pd
         description = repo.description
-        lastchanged = timeAgo(repo.head.commit.committed_date)
+        lastchanged = repo.head.commit.committed_date
 
         projects.append({
             "url": "git/{}".format(name),
@@ -31,6 +31,11 @@ def git():
             "description": description,
             "lastchanged": lastchanged
         })
+
+    projects = sorted(projects, key = lambda item: item["lastchanged"], reverse = True)
+    
+    for project in projects:
+        project["lastchanged"] = timeAgo(project["lastchanged"])
 
     return render_template("projects.html", title = ENV["sitename"], subtitle = "Git", projects = projects)
 
@@ -84,7 +89,7 @@ def git_repository(repository, branch = "master", blob = None, tree = None):
 
     #for lang in langs: 
     #        languages.append("{} {}%".format(lang["name"], lang["percent"]))
- 
+  
     for n, branch in enumerate(branches):
         if branch == "master":
             branch_url = os.path.join("/git", repository)
@@ -93,7 +98,7 @@ def git_repository(repository, branch = "master", blob = None, tree = None):
             branch_url = os.path.join("/git", repository, branch, "tree")
 
         branches[n] = f'<a href="{ branch_url }">{ branch }</a>'
-  
+     
     summary = {
         "desc": repo.description,
         "owner": firstcommit.author,
@@ -102,7 +107,7 @@ def git_repository(repository, branch = "master", blob = None, tree = None):
         "branches": " \\ ".join(branches),
         "languages": "-" #"<br>".join(languages)
     }
-
+  
     files = []
     readme = None
     blobcontent = None

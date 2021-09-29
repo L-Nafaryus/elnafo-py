@@ -1,8 +1,8 @@
 div.document {
   font-size: 1em;
-  line-height:1.5;
+  /*line-height:1.5;*/
   counter-reset: table;
-  max-width: 50em;
+  /*max-width: 50em;*/
   margin: auto;
 }
 /* Transitions */

@@ -36,6 +36,10 @@ a {
     text-decoration: none;
 }
 
+br {
+    margin-top: 30px;
+}
+
 h1, h2, h3 {
     border-bottom-width: 1px;
     border-bottom-style: solid;
@@ -47,40 +51,125 @@ li {
 }
 
 svg {
-    stroke: #888888;
+    /*stroke: #888888;*/
     fill: #888888;
     padding-right: 8px;
 }
+
+.woborders h2,
+.woborders > .container,
+.woborders > .container h2,
+.woborders > .container > .row {
+    border-style: none;
+}
+
+.links-row > a {
+    padding-right: 10px;
+}
+
+.oversize {
+    min-height: 200px;
+}
+
+.nice-image {
+    border-width: 1px;
+    border-style: solid;
+    border-color: var(--hidden-color);
+    width: 150px;
+    height: 150px;
+    margin: auto;
+    margin-bottom: 20px;
+}
+
+#checkbox, .btn span {
+    display: none;
+}
+
+#checkbox:checked ~ .sidebar {
+    display: contents;
+}
+
+/* Menu button */
+.btn {
+    text-align: center;
+    
+    color: var(--link-color);
+    width: 55px;
+    height: 50px;
+    line-height: 50px;
+    padding: 0 20px;
+    cursor: pointer;
+    margin-left: auto;
+    margin-right: 0px;
+}
+
+.btn > span {
+    display: none;
+}
+
+.sidebar {
+    z-index: 1111;
+    display: none;
+}
+
+.sidebar > ul {
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+    
+}
+
+.sidebar > ul > a > li {
+    border-top-width: 1px;
+    border-top-style: solid;
+    border-top-color: var(--hidden-color);
+    padding-top: 15px;
+    padding-bottom: 15px;
+    text-indent: 15px;
+}
+
+.sidebar > ul > a {
+    position: relative;
+    text-decoration: none;
+    display: block;
+    background-color: transparent;
+    color: #BAB5BD;
+    
+}
+
+.sidebar ul a:hover, .sidebar ul a.active {
+    color: var(--link-color);
+}
+
 
 /*
  *  Grid container
  */
 
 .container {
-  display: grid;
-  grid-template-rows: repeat(auto-fit, minmax(50px, 1fr));
+    display: grid;
+    grid-template-rows: repeat(auto-fit, minmax(50px, 1fr));
     border-width: 1px;
     border-style: solid;
     border-color: #555;
 }
 
 .container > .row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
-  border-bottom-width: 1px;
-  border-width: 1px;
-  border-bottom-style: solid;
-  border-bottom-style: solid;
-  border-color: #555555;
-  padding-top: auto;
-  padding-bottom: auto;
-  padding-left: 10px;
-  padding: 10px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+    border-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-style: solid;
+    border-color: #555555;
+    padding-top: auto;
+    padding-bottom: auto;
+    padding-left: 10px;
+    padding: 10px;
 }
 
 .container > .row > .column {
-  display: grid;
-  align-items: center;
+    display: grid;
+    align-items: center;
 }
 
 .container > .row > .column > span {
@@ -92,15 +181,25 @@ svg {
 }
 
 .column.right {
-  text-align: right;
+    text-align: right;
 }
 
 .column.middle {
+    margin-left: auto;
+    margin-right: auto;
 }
 
 /*
  *  Media
  */
+@media (max-width: 1000px) {
+    .links-row > a {
+        display: none;
+    }
+    .btn > span {
+        display: inline;
+    }
+}
 
 @media (max-width: 500px) {
   .column.middle > span {
@@ -109,6 +208,7 @@ svg {
   body {
     font-size: 10pt;
   }
+    
 }
 
 /*
@@ -116,32 +216,33 @@ svg {
  */
 
 section.simple {
-  max-width: 1080px;
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 8px;
-  padding-right: 8px;
-  margin-bottom: 10px;
+    max-width: 1080px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 8px;
+    padding-right: 8px;
+    margin-bottom: 10px;
 }
 
 section.head {
     background-color: var(--foreground-color);
     border-bottom-style: solid;
     border-bottom-color: var(--hidden-color);
-    padding: 0px 20px 0px 20px;
+    /*! padding: 0px 20px 0px 20px; */
     margin-bottom: 25px;
+    /*! max-width: 1000px; */
 }
 
 section.head > span {
-  display: inline-block;
+    display: inline-block;
 }
 
 section.head > span > h2 {
-  border-style: none;
+    border-style: none;
 }
 
 section.head > span > h3 {
-  border-style: none;
+    border-style: none;
 }
 
 /*
@@ -346,4 +447,5 @@ code  {
 #nextbtn:hover {
     opacity: 0.7;
 }
+
 

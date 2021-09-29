@@ -7,8 +7,8 @@ import os, time
 import magic
 import base64
 from app.utils import timeAgo, convertSize
-
-
+  
+ 
 @app.route("/files/")
 @app.route("/files/<path:filepath>")
 def files(filepath = None):
@@ -37,7 +37,7 @@ def files(filepath = None):
             "audio/flac",
 
             "video/webm"
-        ] 
+        ]  
          
         if size > 100 * 1024 * 1024:
             param["content"] = "Too large file"

@@ -8,20 +8,51 @@
         <link href="/static/docutils-style.css" rel="stylesheet" type="text/css">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.1/howler.min.js"></script>
         <link href="/static/gruvbox-dark.css" rel="stylesheet" type="text/css">
-        <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
-        <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
+        <link rel="icon" type="image/png" href="/static/favicon.png">
         <link rel="shortcut icon" type="image/x-icon" href="/static/favicon.ico">
     </head>
     <body>
         <section class="head">
-            <span>
-                <h2><a href={{ url_for("index") }}>{{ title }}</a></h2>
-            </span>
-            {% if subtitle %}
-            <span>
-                <h2>/ {{ subtitle }}</h2>
-            </span>
-            {% endif %}
+            <section class="simple woborders">
+                <div class="container">
+                    <div class="row">
+                        <div class="column left">
+                            <h2>
+                                <a href="/index">ELNAFO</a>
+                                {% if subtitle %}
+                                 / {{ subtitle }}
+                                {% endif %}
+                            </h2>
+                        </div>
+                        <div class="column right">
+                            <span class="links-row">
+                                <label class="btn" for="checkbox">
+                                    <span>Menu</span>
+                                </label>
+
+                                <a href="/index">Home</a>
+                                <a href="/docs">Documentation</a>
+                                <a href="/git">Git</a>
+                                <a href="/files">Files</a>
+                                <a href="/audio">Audio</a>
+                                <a href="/srv">Services</a>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <input type="checkbox" id="checkbox">
+                <div class="sidebar">
+                <ul>
+                    <a href="/index"><li>Home</li></a>
+                    <a href="/docs"><li>Documentation</li></a>
+                    <a href="/git"><li>Git</li></a>
+                    <a href="/files"><li>Files</li></a>
+                    <a href="/audio"><li>Audio</li></a>
+                    <a href="/srv"><li>Services</li></a>
+                </ul>
+                </div>
+            </section>
         </section>
 
         {% block content %}
@@ -29,7 +60,7 @@
         
         <footer class="footer">
             <span>
-                © 2021 L-Nafaryus <a href="mailto:l.nafaryus@gmail.com">l.nafaryus@gmail.com</a>
+                © 2021 L-Nafaryus
             </span>
         </footer>
     </body>
